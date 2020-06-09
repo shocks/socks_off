@@ -1,5 +1,5 @@
 #include"configclass.h"
-int main()
+int main_1()
 {
     /**打开配置文件**/
     CConfigOperator tCConfigOperator;
