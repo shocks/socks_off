@@ -1,30 +1,90 @@
-#include <hiredis/hiredis.h>
-#include <iostream>
-#include <string>
-int r1_main(int argc, char **argv)
-{
-    struct timeval timeout = {2, 0};    //2s的超时时间
-    //redisContext是Redis操作对象
-    redisContext *pRedisContext = (redisContext*)redisConnectWithTimeout("127.0.0.1", 6379, timeout);
-    std::cout<<"pRedisContext="<<pRedisContext<<"\tpRedisContext->err="<<pRedisContext->err<<std::endl;
-    if ( (NULL == pRedisContext) || (pRedisContext->err) )
-    {
-        if (pRedisContext)
-        {
-            std::cout << "connect error:11111" << pRedisContext->errstr << std::endl;
-        }
-        else
-        {
-            std::cout << "connect error:222 can't allocate redis context." << std::endl;
-        }
-        return -1;
-    }
-    //redisReply是Redis命令回复对象 redis返回的信息保存在redisReply对象中
-    redisReply *pRedisReply = (redisReply*)redisCommand(pRedisContext, "INFO");  //执行INFO命令
-    std::cout << pRedisReply->str << std::endl;
-    //当多条Redis命令使用同一个redisReply对象时 
-    //每一次执行完Redis命令后需要清空redisReply 以免对下一次的Redis操作造成影响
-    freeReplyObject(pRedisReply);   
-
-    return 0;
-}
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <stddef.h> 
+#include <stdarg.h> 
+#include <string.h> 
+#include <assert.h> 
+#include <hiredis/hiredis.h> 
+ 
+void doTest() 
+{ 
+  //redis默认监听端口为6387 可以再配置文件中修改 
+  redisContext* c = redisConnect("127.0.0.1", 6379); 
+  if ( c->err) 
+  { 
+    redisFree(c); 
+    printf("Connect to redisServer faile\n"); 
+    return ; 
+  } 
+  printf("Connect to redisServer Success\n"); 
+   
+  const char* command1 = "set stest1 value1"; 
+  redisReply* r = (redisReply*)redisCommand(c, command1); 
+   
+  if( NULL == r) 
+  { 
+    printf("Execut command1 failure\n"); 
+    redisFree(c); 
+    return; 
+  } 
+  if( !(r->type == REDIS_REPLY_STATUS && strcasecmp(r->str,"OK")==0)) 
+  { 
+    printf("Failed to execute command[%s]\n",command1); 
+    freeReplyObject(r); 
+    redisFree(c); 
+    return; 
+  }   
+  freeReplyObject(r);   
+  printf("Succeed to execute command[%s]\n", command1); 
+   
+  const char* command2 = "strlen stest1"; 
+  r = (redisReply*)redisCommand(c, command2); 
+  if ( r->type != REDIS_REPLY_INTEGER) 
+  { 
+    printf("Failed to execute command[%s]\n",command2); 
+    freeReplyObject(r); 
+    redisFree(c); 
+    return; 
+  } 
+  int length = r->integer; 
+  freeReplyObject(r); 
+  printf("The length of 'stest1' is %d.\n", length); 
+  printf("Succeed to execute command[%s]\n", command2); 
+   
+   
+  const char* command3 = "get stest1"; 
+  r = (redisReply*)redisCommand(c, command3); 
+  if ( r->type != REDIS_REPLY_STRING) 
+  { 
+    printf("Failed to execute command[%s]\n",command3); 
+    freeReplyObject(r); 
+    redisFree(c); 
+    return; 
+  } 
+  printf("The value of 'stest1' is %s\n", r->str); 
+  freeReplyObject(r); 
+  printf("Succeed to execute command[%s]\n", command3); 
+   
+  const char* command4 = "get stest2"; 
+  r = (redisReply*)redisCommand(c, command4); 
+  if ( r->type != REDIS_REPLY_NIL) 
+  { 
+    printf("Failed to execute command[%s]\n",command4); 
+    freeReplyObject(r); 
+    redisFree(c); 
+    return; 
+  } 
+  freeReplyObject(r); 
+  printf("Succeed to execute command[%s]\n", command4);   
+   
+   
+  redisFree(c); 
+   
+} 
+ 
+int main() 
+{ 
+  doTest(); 
+  return 0; 
+} 
+ 

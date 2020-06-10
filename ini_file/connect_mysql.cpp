@@ -79,14 +79,14 @@ DBServer::DBServer() {
         std::cerr << "can not connect to mysql server\n";
         exit(1);
     }
-    if ((mysql_real_connect(m_SQLCON, "localhost", "ant_user", "ant_user",
+    if ((mysql_real_connect(m_SQLCON, "localhost", "root", "s",
                             "akdcenter", 0, NULL, CLIENT_MULTI_STATEMENTS)) == NULL) {
         finish_with_error(m_SQLCON);
     }
 }
 
 bool DBServer::registerUserInfo(const std::string &username, const std::string &password, std::string &result) {
-    std::string sql("SELECT * FROM user_pve_stage;");
+    std::string sql("SELECT * FROM socks_test;");
       //  "INSERT INTO userinfo(username, password, wintimes, failtimes) " + std::string("VALUES (\"") + username + "\", \"" + password +
        // "\", 0, 0);");
     if (mysql_query(m_SQLCON, sql.c_str())) {
@@ -100,7 +100,7 @@ bool DBServer::registerUserInfo(const std::string &username, const std::string &
 }
 
 bool DBServer::signInQuery(const std::string &username, const std::string &password, std::string &result) {
-    std::string sql("SELECT uid,stage_num FROM user_pve_stage;");
+    std::string sql("SELECT id,user FROM socks_test;");
     
     if(mysql_query(m_SQLCON,sql.c_str())){
         cout<<"mysql_query failed!!"<<endl;
@@ -110,8 +110,8 @@ bool DBServer::signInQuery(const std::string &username, const std::string &passw
     MYSQL_RES *res=mysql_store_result(m_SQLCON);
     MYSQL_ROW row ;
     while(row=mysql_fetch_row(res)){
-        cout<<"uid="<<row[0];
-        cout<<"\t stage_num="<<row[1]<<endl;
+        cout<<"id="<<row[0];
+        cout<<"\t user="<<row[1]<<endl;
     }
 
     finishQuery();
@@ -153,7 +153,7 @@ bool DBServer::updateUserCombatNum(const std::string &username, int delta, std::
     return true;
 }
 
-int main() {
+int mysql_main() {
     auto it = DBServer::getDBServer();
     std::cout<<"start!!"<<std::endl;
     std::string res;
