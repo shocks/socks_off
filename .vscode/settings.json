@@ -38,7 +38,19 @@
         "iomanip": "cpp",
         "memory": "cpp",
         "mutex": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "cmath": "cpp",
+        "cstddef": "cpp",
+        "cstring": "cpp",
+        "atomic": "cpp",
+        "strstream": "cpp",
+        "bitset": "cpp",
+        "list": "cpp",
+        "numeric": "cpp",
+        "system_error": "cpp",
+        "cfenv": "cpp",
+        "cinttypes": "cpp",
+        "typeindex": "cpp"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

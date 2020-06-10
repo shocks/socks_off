@@ -11,9 +11,12 @@ add_executable(ini_file
 ${SOURCE_DIR}
 )
 
+target_include_directories(ini_file PUBLIC "/usr/include/mysql")
 target_include_directories(ini_file PUBLIC "/usr/local/boost/include/boost")
 #include<boost/include/boost/>
 target_link_libraries(ini_file hiredis)
+target_link_libraries(ini_file mysqlclient)
+
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

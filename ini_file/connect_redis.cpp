@@ -1,7 +1,7 @@
 #include <hiredis/hiredis.h>
 #include <iostream>
 #include <string>
-int main(int argc, char **argv)
+int r1_main(int argc, char **argv)
 {
     struct timeval timeout = {2, 0};    //2s的超时时间
     //redisContext是Redis操作对象
